@@ -18,6 +18,12 @@
 void add_circle( struct matrix * points, 
 		 double cx, double cy, double cz,
 		 double r, double step ) {
+  
+  step = 0;
+  while(step < 1){
+    add_point(points, (r * cos(step)) + cx, (r * sin(step)) + cy, cz);     
+    step += .01;
+  }
 }
 
 /*======== void add_curve() ==========

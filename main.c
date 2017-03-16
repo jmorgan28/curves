@@ -25,10 +25,26 @@ int main(int argc, char **argv) {
   /* print_matrix(make_rotZ(M_PI/4)); */
   /* printf("\n"); */
 
-  if ( argc == 2 )
-    parse_file( argv[1], transform, edges, s );
-  else
-    parse_file( "stdin", transform, edges, s );
+  //if ( argc == 2 )
+  //parse_file( argv[1], transform, edges, s );
+  // else
+  // parse_file( "stdin", transform, edges, s );
+
+  clear_screen(s);
+
+  color c;
+ 
+  
+  c.red = 0;
+  c.green = MAX_COLOR;
+  c.blue = 0;
+
+  add_circle(edges, 250, 250, 0, 200, 0);
+
+  draw_lines(edges,s,c);
+  
+  display(s);
+  save_extension(s, "circle.png");
 
   
   free_matrix( edges );

@@ -34,4 +34,4 @@ void scalar_mult(double x, struct matrix *m);
 void matrix_mult(struct matrix *a, struct matrix *b);
 
 #endif
-Contact GitHub API Training Shop Blog About
+
