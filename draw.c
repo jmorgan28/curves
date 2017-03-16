@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <math.h>
 #include "ml6.h"
 #include "display.h"
 #include "draw.h"
@@ -21,7 +21,8 @@ void add_circle( struct matrix * points,
   
   step = 0;
   while(step < 1){
-    add_point(points, (r * cos(step)) + cx, (r * sin(step)) + cy, cz);     
+    add_point(points, (r * cos(M_PI * step *2)) + cx, (r * sin(M_PI * 2 *step)) + cy, cz);
+    add_point(points, (r * cos(M_PI * step *2)) + cx, (r * sin(M_PI * 2 *step)) + cy, cz);     
     step += .01;
   }
 }

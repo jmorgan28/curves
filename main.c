@@ -40,6 +40,7 @@ int main(int argc, char **argv) {
   c.blue = 0;
 
   add_circle(edges, 250, 250, 0, 200, 0);
+  add_circle(edges, 175, 325, 0, 50, 0);
 
   draw_lines(edges,s,c);
   
