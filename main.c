@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
   /* printf("\n"); */
   /* print_matrix(make_rotY(M_PI/4)); */
   /* printf("\n"); */
-  /* print_matrix(make_rotZ(M_PI/4)); */
+  //print_matrix(make_rotZ(M_PI/4)); 
   /* printf("\n"); */
 
   //if ( argc == 2 )
@@ -38,14 +38,14 @@ int main(int argc, char **argv) {
   c.red = 0;
   c.green = MAX_COLOR;
   c.blue = 0;
+  print_matrix(make_hermite()); 
+  // add_circle(edges, 250, 250, 0, 200, 0);
+  //add_circle(edges, 175, 325, 0, 50, 0);
 
-  add_circle(edges, 250, 250, 0, 200, 0);
-  add_circle(edges, 175, 325, 0, 50, 0);
-
-  draw_lines(edges,s,c);
+  //draw_lines(edges,s,c);
   
-  display(s);
-  save_extension(s, "circle.png");
+  //display(s);
+  //save_extension(s, "circle.png");
 
   
   free_matrix( edges );
