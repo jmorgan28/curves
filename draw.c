@@ -50,7 +50,14 @@ void add_curve( struct matrix *points,
 		double x1, double y1, 
 		double x2, double y2, 
 		double x3, double y3, 
-		double step, int type ) {
+		double t, int type ) {
+  struct matrix *x = generate_curve_coefs(x0,x1,x2,x2,type);
+  struct matrix *y = generate_curve_coefs(y0,y1,y2,y2,type);
+  t = .01;
+  while(t < 1){
+    add_point(points, (x->m[0][0] * t * t * t) + (x->m[0][1] * t * t) + (x->m[0][2] * t) + x->m[0][3], (y->m[0][0] * t * t * t) + (y->m[0][1] * t * t) + (y->m[0][2] * t) + y->m[0][3], 0);
+    t += .01;
+  }
 }
 
 
