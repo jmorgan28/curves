@@ -39,13 +39,14 @@ int main(int argc, char **argv) {
   c.green = MAX_COLOR;
   c.blue = 0;
   print_matrix(make_hermite()); 
-  // add_circle(edges, 250, 250, 0, 200, 0);
-  //add_circle(edges, 175, 325, 0, 50, 0);
-
-  //draw_lines(edges,s,c);
+  add_circle(edges, 250, 250, 0, 200, 0);
+  add_circle(edges, 175, 325, 0, 50, 0);
+  add_curve(edges,150,150,350,150,0,-100,0,150,0, 1);
+  add_curve(edges,200,250,150,50,300,250,300,250,0, 0);
+  draw_lines(edges,s,c);
   
-  //display(s);
-  //save_extension(s, "circle.png");
+  display(s);
+  save_extension(s, "circle.png");
 
   
   free_matrix( edges );
