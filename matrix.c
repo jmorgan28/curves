@@ -66,7 +66,18 @@ struct matrix * make_hermite() {
   ====================*/
 struct matrix * generate_curve_coefs( double p1, double p2, 
 				      double p3, double p4, int type) {
-  return NULL;
+  struct matrix *b = new_matrix(1, 4);
+  b->m[0][0] = p1;
+  b->m[0][1] = p2;
+  b->m[0][2] = p3;
+  b->m[0][3] = p4;
+  if(type == 0){
+    matrix_mult(make_bezier(),b);
+  }
+  else{
+    matrix_mult(make_hermite(),b);
+  }
+  return b;
 }
 
 
