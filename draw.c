@@ -52,16 +52,19 @@ void add_curve( struct matrix *points,
 		double x3, double y3, 
 		double t, int type ) {
   struct matrix *x = generate_curve_coefs(x0,x1,x2,x2,type);
+  //print_matrix(x);
+  //printf("\n");
   struct matrix *y = generate_curve_coefs(y0,y1,y2,y2,type);
+  //print_matrix(y);
   t = 0;
-  add_point(points, (x->m[0][0] * t * t * t) + (x->m[0][1] * t * t) + (x->m[0][2] * t) + x->m[0][3], (y->m[0][0] * t * t * t) + (y->m[0][1] * t * t) + (y->m[0][2] * t) + y->m[0][3], 0);
+  add_point(points, (x->m[0][0] * t * t * t) + (x->m[1][0] * t * t) + (x->m[2][0] * t) + x->m[3][0], (y->m[0][0] * t * t * t) + (y->m[1][0] * t * t) + (y->m[2][0] * t) + y->m[3][0], 0);
   t = .01;
-  while(t < 1){
-    add_point(points, (x->m[0][0] * t * t * t) + (x->m[0][1] * t * t) + (x->m[0][2] * t) + x->m[0][3], (y->m[0][0] * t * t * t) + (y->m[0][1] * t * t) + (y->m[0][2] * t) + y->m[0][3], 0);
-    add_point(points, (x->m[0][0] * t * t * t) + (x->m[0][1] * t * t) + (x->m[0][2] * t) + x->m[0][3], (y->m[0][0] * t * t * t) + (y->m[0][1] * t * t) + (y->m[0][2] * t) + y->m[0][3], 0);
+  while(t < 1){  
+  add_point(points, (x->m[0][0] * t * t * t) + (x->m[1][0] * t * t) + (x->m[2][0] * t) + x->m[3][0], (y->m[0][0] * t * t * t) + (y->m[1][0] * t * t) + (y->m[2][0] * t) + y->m[3][0], 0); 
+  add_point(points, (x->m[0][0] * t * t * t) + (x->m[1][0] * t * t) + (x->m[2][0] * t) + x->m[3][0], (y->m[0][0] * t * t * t) + (y->m[1][0] * t * t) + (y->m[2][0] * t) + y->m[3][0], 0);
     t += .01;
-  }
-  add_point(points, (x->m[0][0] * t * t * t) + (x->m[0][1] * t * t) + (x->m[0][2] * t) + x->m[0][3], (y->m[0][0] * t * t * t) + (y->m[0][1] * t * t) + (y->m[0][2] * t) + y->m[0][3], 0);
+  } 
+  add_point(points, (x->m[0][0] * t * t * t) + (x->m[1][0] * t * t) + (x->m[2][0] * t) + x->m[3][0], (y->m[0][0] * t * t * t) + (y->m[1][0] * t * t) + (y->m[2][0] * t) + y->m[3][0], 0);
 }
 
 

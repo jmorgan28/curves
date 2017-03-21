@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
   c.red = 0;
   c.green = MAX_COLOR;
   c.blue = 0;
-  print_matrix(make_hermite()); 
+  print_matrix(generate_curve_coefs(1,2,3,4,0)); 
   add_circle(edges, 250, 250, 0, 200, 0);
   add_circle(edges, 175, 325, 0, 50, 0);
   add_curve(edges,150,150,350,150,0,-100,0,150,0, 1);
