@@ -21,12 +21,6 @@ The file follows the following format:
      Every command is a single character that takes up a line
      Any command that requires arguments must have those arguments in the second line.
      The commands are as follows:
-	 circle: add a circle to the edge matrix - 
-	    takes 4 arguments (cx, cy, cz, r)
-	 hermite: add a hermite curve to the edge matrix -
-	    takes 8 arguments (x0, y0, x1, y1, rx0, ry0, rx1, ry1)
-	 bezier: add a bezier curve to the edge matrix -
-	    takes 8 arguments (x0, y0, x1, y1, x2, y2, x3, y3)
          line: add a line to the edge matrix - 
 	    takes 6 arguemnts (x0, y0, z0, x1, y1, z1)
 	 ident: set the transform matrix to the identity matrix - 
@@ -36,9 +30,9 @@ The file follows the following format:
 	 translate: create a translation matrix, 
 	    then multiply the transform matrix by the translation matrix - 
 	    takes 3 arguments (tx, ty, tz)
-	 rotate: create a rotation matrix,
+	 rotate: create an rotation matrix,
 	    then multiply the transform matrix by the rotation matrix -
-	    takes 2 arguments (axis, theta) axis should be x, y or z
+	    takes 2 arguments (axis, theta) axis should be x y or z
 	 apply: apply the current transformation matrix to the 
 	    edge matrix
 	 display: draw the lines of the edge matrix to the screen
@@ -59,110 +53,162 @@ void parse_file ( char * filename,
                   struct matrix * edges,
                   screen s) {
 
-  FILE *f;
-  char line[255];
-  clear_screen(s);
-  color c;
-  c.red = 255;
-  c.green = 0;
-  c.blue = 255;
+   color c;
+ 
   
+  c.red = 0;
+  c.green = MAX_COLOR;
+  c.blue = 0;
+
+  clear_screen(s);
+  
+  FILE *f;
+  char line[256];
+  clear_screen(s);
   if ( strcmp(filename, "stdin") == 0 ) 
     f = stdin;
   else
     f = fopen(filename, "r");
-  
-  while ( fgets(line, sizeof(line), f) != NULL ) {
+
+
+  int prev = 0;
+
+  while ( fgets(line, 255, f) != NULL ) {
     line[strlen(line)-1]='\0';
     //printf(":%s:\n",line);
-
-    double xvals[3];
-    double yvals[3];
-    double zvals[4];
-    struct matrix *tmp;
-    double theta;
-    char axis;
-    
-    if ( strncmp(line, "line", strlen(line)) == 0 ) {
-      fgets(line, sizeof(line), f);
-      //printf("LINE\t%s", line);
-
-      sscanf(line, "%lf %lf %lf %lf %lf %lf",
-	     xvals, yvals, zvals,
-	     xvals+1, yvals+1, zvals+1);
-      /*printf("%lf %lf %lf %lf %lf %lf",
-	     xvals[0], yvals[0], zvals[0],
-	     xvals[1], yvals[1], zvals[1]) */
-      add_edge(edges, xvals[0], yvals[0], zvals[0],
-	       xvals[1], yvals[1], zvals[1]);      
-    }//end line
-
-    else if ( strncmp(line, "scale", strlen(line)) == 0 ) {
-      fgets(line, sizeof(line), f);
-      //printf("SCALE\t%s", line);
-      sscanf(line, "%lf %lf %lf",
-	     xvals, yvals, zvals);
-      /* printf("%lf %lf %lf\n", */
-      /* 	xvals[0], yvals[0], zvals[0]); */ 
-      tmp = make_scale( xvals[0], yvals[0], zvals[0]);
-      matrix_mult(tmp, transform);
-    }//end scale
-
-    else if ( strncmp(line, "move", strlen(line)) == 0 ) {
-      fgets(line, sizeof(line), f);
-      //printf("MOVE\t%s", line);
-      sscanf(line, "%lf %lf %lf",
-	     xvals, yvals, zvals);
-      /* printf("%lf %lf %lf\n", */
-      /* 	xvals[0], yvals[0], zvals[0]); */ 
-      tmp = make_translate( xvals[0], yvals[0], zvals[0]);
-      matrix_mult(tmp, transform);
-    }//end translate
-
-    else if ( strncmp(line, "rotate", strlen(line)) == 0 ) {
-      fgets(line, sizeof(line), f);
-      //printf("Rotate\t%s", line);
-      sscanf(line, "%c %lf",
-	     &axis, &theta);      
-      /* printf("%c %lf\n", */
-      /* 	axis, theta); */
-      theta = theta * (M_PI / 180);
-      if ( axis == 'x' )
-	tmp = make_rotX( theta );
-      else if ( axis == 'y' )
-	tmp = make_rotY( theta );
-      else 
-	tmp = make_rotZ( theta );
-      
-      matrix_mult(tmp, transform);
-    }//end rotate
-
-    else if ( strncmp(line, "ident", strlen(line)) == 0 ) {
-      //printf("IDENT\t%s", line);
+    int skip = 0;
+    if(strcmp("line", line) == 0){
+      prev = 1;
+      skip = 1;
+    }
+    if(strcmp("ident", line) ==0){
+      prev = 2;
       ident(transform);
-    }//end ident
-    
-    else if ( strncmp(line, "apply", strlen(line)) == 0 ) {
-      //printf("APPLY\t%s", line);
+      skip = 1;
+    }
+    if(strcmp("scale", line) ==0){
+      prev = 3;
+      skip = 1;
+    }
+    if(strcmp("move", line)== 0){
+      prev = 4;
+      skip = 1;
+    }
+    if(strcmp("rotate", line) == 0){
+      prev = 5;
+      skip = 1;
+    }
+    if(strcmp("apply", line) == 0){
+      prev = 6;
       matrix_mult(transform, edges);
-    }//end apply
-    
-    else if ( strncmp(line, "display", strlen(line)) == 0 ) {
-      //printf("DISPLAY\t%s", line);
+      skip = 1;
+    }
+    if(strcmp("display", line) == 0){
       clear_screen(s);
-      draw_lines(edges, s, c);
-      display( s );
-    }//end display
-    
-    else if ( strncmp(line, "save", strlen(line)) == 0 ) {
-      fgets(line, sizeof(line), f);
-      *strchr(line, '\n') = 0;
-      //printf("SAVE\t%s\n", line);
-      clear_screen(s);
-      draw_lines(edges, s, c);
-      save_extension(s, line);
-    }//end save
+      draw_lines(edges,s,c);
+      display(s);
+      skip = 1;
+      prev = 7;
+    }
+    if(strcmp("save", line) == 0){
+      skip = 1;
+      prev = 8;
+    }
+    if(strcmp("circle", line) == 0){
+      skip = 1;
+      prev = 10;
+    }
+    if(strcmp("hermite", line) == 0){
+      skip = 1;
+      prev = 11;
+    }
+    if(strcmp("bezier", line) == 0){
+      skip = 1;
+      prev = 12;
+    }
+    if(strcmp("quit", line) == 0){
+      skip = 1;
+      prev = 9;
+      exit(0);
+    }
+    if(skip != 1){
+      if(prev == 1){
+	char * a = line;
+	int x0 = atoi(strsep(&a, " "));
+	int y0 = atoi(strsep(&a, " "));
+	int z0 = atoi(strsep(&a, " "));
+	int x1 = atoi(strsep(&a, " "));
+	int y1 = atoi(strsep(&a, " "));
+	int z1 = atoi(strsep(&a, " "));
+	add_edge(edges,x0,y0,z0,x1,y1,z1);
+      }
+      if(prev == 3){
+	char * a = line;
+	int mx = atoi(strsep(&a, " "));
+	int my = atoi(strsep(&a, " "));
+	int mz = atoi(strsep(&a, " "));
+	matrix_mult(make_scale(mx,my,mz), transform);
 
-    
+      }
+      if(prev == 4){
+	char * a = line;
+	int tx = atoi(strsep(&a, " "));
+	int ty = atoi(strsep(&a, " "));
+	int tz = atoi(strsep(&a, " "));
+	matrix_mult(make_translate(tx,ty,tz), transform);
+      }
+      if(prev == 5){
+	char * a = line;
+	char * which= strsep(&a, " ");
+	int angle = atoi(strsep(&a, " "));
+	if(strcmp(which, "x") == 0){
+	  matrix_mult( make_rotX(angle), transform);
+	}
+	if(strcmp(which, "y") == 0){
+	  matrix_mult( make_rotY(angle), transform);
+	}
+	if(strcmp(which, "z") == 0){
+	  matrix_mult( make_rotZ(angle), transform);
+	}
+      }
+      if(prev == 8){
+	draw_lines(edges,s,c);
+	char * a = line;
+	char * name= strsep(&a, " ");
+	save_extension(s, name);
+      }
+      if(prev == 10){
+	char * a = line;
+	int cx = atoi(strsep(&a, " "));
+	int cy = atoi(strsep(&a, " "));
+	int cz = atoi(strsep(&a, " "));
+	int r = atoi(strsep(&a, " "));
+	add_circle(edges,cx,cy,cz,r,0);
+      }
+      if(prev == 11){
+	char * a = line;
+	int x0 = atoi(strsep(&a, " "));
+	int y0 = atoi(strsep(&a, " "));
+	int x1 = atoi(strsep(&a, " "));
+	int y1 = atoi(strsep(&a, " "));
+	int rx0 = atoi(strsep(&a, " "));
+	int ry0 = atoi(strsep(&a, " "));
+	int rx1 = atoi(strsep(&a, " "));
+	int ry1 = atoi(strsep(&a, " "));
+	add_curve(edges,x0,y0,x1,y1,rx0,ry0,rx1,ry1,0,1);
+      }
+      if(prev == 12){
+	char * a = line;
+	int x0 = atoi(strsep(&a, " "));
+	int y0 = atoi(strsep(&a, " "));
+	int x1 = atoi(strsep(&a, " "));
+	int y1 = atoi(strsep(&a, " "));
+	int x2 = atoi(strsep(&a, " "));
+	int y2 = atoi(strsep(&a, " "));
+	int x3 = atoi(strsep(&a, " "));
+	int y3 = atoi(strsep(&a, " "));
+	add_curve(edges,x0,y0,x1,y1,x2,y2,x3,y3,0,0);
+      }
+    }
   }
 }
